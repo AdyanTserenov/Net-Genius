@@ -2,6 +2,7 @@ package com.simul_tech.netgenius.configurators;
 
 import com.simul_tech.netgenius.security.TokenFilter;
 import com.simul_tech.netgenius.services.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +24,10 @@ import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private TokenFilter tokenFilter;
     private UserService userService;
-
-    public SecurityConfig() {}
 
     @Autowired
     public void setTokenFilter(TokenFilter tokenFilter) {
@@ -67,16 +67,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/secured/**").fullyAuthenticated()
-                        .requestMatchers("/oauth2/**").permitAll()
                         .anyRequest().permitAll()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/oauth2/authorization")
-                        )
-                        .redirectionEndpoint(redirection -> redirection
-                                .baseUri("/login/oauth2/callback/*")
-                        )
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
